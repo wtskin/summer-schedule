@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>暑期补习日历</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    padding: 24px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .header {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: 26px; font-weight: 700; letter-spacing: -0.5px;
+  }
+  .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .header-actions button {
+    padding: 6px 14px; border-radius: 16px; border: 1.5px solid #d2d2d7;
+    background: #fff; font-size: 12px; font-weight: 500; cursor: pointer;
+    transition: all .15s; font-family: inherit;
+  }
+  .header-actions button:hover { background: #e8e8ed; }
+  .header-actions .primary {
+    background: #0071e3; color: #fff; border-color: #0071e3;
+  }
+  .header-actions .primary:hover { background: #0077ed; }
+  .subtitle {
+    color: #86868b; font-size: 14px; margin-bottom: 16px;
+  }
+  .month-nav {
+    display: flex; gap: 8px; margin-bottom: 16px;
+  }
+  .month-nav button {
+    padding: 8px 20px; border-radius: 20px; border: 1.5px solid #d2d2d7;
+    background: #fff; font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: all .15s; font-family: inherit;
+  }
+  .month-nav button.active {
+    background: #0071e3; color: #fff; border-color: #0071e3;
+  }
+  .month-nav button:hover:not(.active) { background: #e8e8ed; }
+  .calendar {
+    background: #fff; border-radius: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    overflow: hidden; display: none;
+  }
+  .calendar.active { display: block; }
+  .calendar-header {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    background: #f5f5f7; border-bottom: 1px solid #e8e8ed;
+  }
+  .calendar-header div {
+    padding: 10px 6px; text-align: center; font-size: 12px;
+    font-weight: 600; color: #6e6e73;
+  }
+  .calendar-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+  }
+  .day {
+    min-height: 95px; padding: 5px; border-right: 1px solid #f0f0f2;
+    border-bottom: 1px solid #f0f0f2; cursor: pointer;
+    transition: background .1s;
+  }
+  .day:hover { background: #f0f7ff; }
+  .day:nth-child(7n) { border-right: none; }
+  .day.other-month { background: #fafafa; }
+  .day.other-month:hover { background: #f0f0f2; }
+  .day-number {
+    font-size: 12px; font-weight: 500; color: #1d1d1f; margin-bottom: 2px;
+  }
+  .day.other-month .day-number { color: #c7c7cc; }
+  .event {
+    font-size: 10px; padding: 2px 4px; border-radius: 3px;
+    margin-bottom: 1px; line-height: 1.35;
+  }
+  .event.math { background: #d4f5dc; color: #1a6b2e; }
+  .event.physics { background: #e2d5f5; color: #5a3d8a; }
+  .event.chemistry { background: #ffe4cc; color: #8a4a00; }
+  .event.biology { background: #cce8f5; color: #1a5a7a; }
+  .event.note {
+    background: #fff9db; color: #8a7a00; font-size: 9.5px;
+    border-left: 2px solid #f0d060;
+  }
+  .event.tbd { background: #f0f0f0; color: #86868b; font-style: italic; }
+
+  .legend {
+    display: flex; gap: 14px; margin-top: 16px; padding: 10px 0;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 5px; font-size: 12px; color: #515154;
+  }
+  .legend-color {
+    width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; padding: 20px;
+  }
+  .modal {
+    background: #fff; border-radius: 14px; padding: 24px;
+    width: 380px; max-width: 100%; box-shadow: 0 8px 30px rgba(0,0,0,.15);
+  }
+  .modal h3 {
+    font-size: 17px; font-weight: 600; margin-bottom: 16px;
+  }
+  .modal .field {
+    margin-bottom: 12px;
+  }
+  .modal label {
+    font-size: 12px; font-weight: 500; color: #6e6e73; display: block; margin-bottom: 4px;
+  }
+  .modal select, .modal input {
+    width: 100%; padding: 8px 10px; border: 1.5px solid #d2d2d7; border-radius: 8px;
+    font-size: 14px; font-family: inherit; outline: none;
+  }
+  .modal select:focus, .modal input:focus { border-color: #0071e3; }
+  .modal-actions {
+    display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px;
+  }
+  .modal-actions button {
+    padding: 8px 18px; border-radius: 18px; border: 1.5px solid #d2d2d7;
+    background: #fff; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit;
+  }
+  .modal-actions .primary {
+    background: #0071e3; color: #fff; border-color: #0071e3;
+  }
+  .modal-actions .danger {
+    background: #fff; color: #e34040; border-color: #e34040;
+  }
+  .modal .current-events {
+    margin-bottom: 12px; max-height: 180px; overflow-y: auto;
+  }
+  .modal .event-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 5px 8px; border-radius: 6px; margin-bottom: 4px; font-size: 13px;
+  }
+  .modal .event-row .del {
+    cursor: pointer; color: #e34040; font-size: 16px; line-height: 1; padding: 0 4px;
+  }
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: #1d1d1f; color: #fff; padding: 10px 22px; border-radius: 10px;
+    font-size: 13px; z-index: 200; opacity: 0; transition: opacity .3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+  
+  @media (max-width: 768px) {
+    body { padding: 12px; }
+    h1 { font-size: 20px; }
+    .day { min-height: 68px; padding: 3px; }
+    .day-number { font-size: 11px; }
+    .event { font-size: 9px; }
+    .modal { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>📅 暑期补习日历</h1>
+      <div class="subtitle" id="lastSaved">2026年6月19日 — 8月31日</div>
+    </div>
+    <div class="header-actions">
+      <button onclick="exportData()" title="分享给家人">📤 导出</button>
+      <button onclick="document.getElementById('importInput').click()">📥 导入</button>
+      <input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(event)">
+      <button class="primary" onclick="shareToWechat()">💬 分享</button>
+    </div>
+  </div>
+  
+  <div class="month-nav" id="monthNav"></div>
+  <div id="calendars"></div>
+  
+  <div class="legend">
+    <div class="legend-item"><div class="legend-color" style="background:#d4f5dc"></div>数学</div>
+    <div class="legend-item"><div class="legend-color" style="background:#e2d5f5"></div>物理</div>
+    <div class="legend-item"><div class="legend-color" style="background:#ffe4cc"></div>化学</div>
+    <div class="legend-item"><div class="legend-color" style="background:#cce8f5"></div>生物</div>
+    <div class="legend-item"><div class="legend-color" style="background:#fff9db;border-left:2px solid #f0d060"></div>备注</div>
+    <div class="legend-item"><div class="legend-color" style="background:#f0f0f0"></div>待定</div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+// ════════════════════════════════════════════
+// Data stored in localStorage for persistence
+// ════════════════════════════════════════════
+const DEFAULT_EVENTS = {
+  "6-22": [["备注","合格考集训"]],
+  "6-23": [["备注","合格考集训"]],
+  "6-24": [["备注","合格考集训"]],
+  "6-25": [["备注","合格考集训"]],
+  "6-26": [["备注","合格考集训"]],
+  "6-28": [["备注","合格考"]],
+  "6-29": [["物理","19:00试课"],["备注","合格考"]],
+  "7-2":  [["生物","15:30-17:30"],["数学","18:30-20:30"]],
+  "7-4":  [["生物","15:30-17:30"],["数学","待定"],["备注","晚上外出"]],
+  "7-6":  [["数学","18:30-20:30"]],
+  "7-7":  [["生物","15:30-17:30"]],
+  "7-8":  [["数学","18:30-20:30"]],
+  "7-9":  [["生物","15:30-17:30"]],
+  "7-10": [["数学","18:30-20:30"]],
+  "7-11": [["生物","15:30-17:30"]],
+  "7-12": [["生物","15:30-17:30"],["数学","18:30-20:30"]],
+  "7-14": [["生物","15:30-17:30"],["数学","18:30-20:30"]],
+  "7-16": [["生物","15:30-17:30"],["数学","18:30-20:30"]],
+  "7-18": [["生物","15:30-17:30"],["数学","18:30-20:30"]],
+  "7-20": [["数学","18:30-20:30"]],
+  "7-21": [["生物","15:30-17:30"]],
+  "7-22": [["数学","18:30-20:30"]],
+  "7-23": [["生物","15:30-17:30"]],
+  "7-24": [["数学","18:30-20:30"]],
+  "7-25": [["生物","15:30-17:30"]],
+  "7-26": [["生物","15:30-17:30"],["数学","18:30-20:30"]],
+  "7-28": [["数学","9:30-11:30"],["生物","15:30-17:30"]],
+  "7-30": [["数学","9:30-11:30"],["生物","15:30-17:30"]],
+  "8-1":  [["数学","9:30-11:30"],["生物","15:30-17:30"]],
+  "8-3":  [["数学","9:30-11:30"]],
+  "8-4":  [["生物","15:30-17:30"]],
+  "8-5":  [["数学","9:30-11:30"]],
+  "8-6":  [["生物","15:30-17:30"]],
+  "8-7":  [["数学","9:30-11:30"]],
+  "8-8":  [["生物","15:30-17:30"]],
+  "8-9":  [["数学","9:30-11:30"],["生物","15:30-17:30"]],
+  "8-11": [["数学","9:30-11:30"]],
+};
+
+function loadData() {
+  let saved = localStorage.getItem('summer_schedule_2026');
+  if (saved) {
+    try { return JSON.parse(saved); } catch(e) {}
+  }
+  return JSON.parse(JSON.stringify(DEFAULT_EVENTS));
+}
+
+function saveData(events) {
+  localStorage.setItem('summer_schedule_2026', JSON.stringify(events));
+  let now = new Date();
+  let s = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  document.getElementById('lastSaved').textContent = '自动保存 · ' + s;
+}
+
+let events = loadData();
+const subjectClasses = {'数学':'math','物理':'physics','化学':'chemistry','生物':'biology'};
+const weekdayNames = ['日','一','二','三','四','五','六'];
+const months = [
+  {index: 6, year: 2026, name: '6月'},
+  {index: 7, year: 2026, name: '7月'},
+  {index: 8, year: 2026, name: '8月'}
+];
+
+function parseSort(s) {
+  if (s === '待定') return 9999;
+  if (s === '备注') return 9998;
+  let m = s.match(/(\d{1,2}):(\d{2})/);
+  if (m) return parseInt(m[1])*60 + parseInt(m[2]);
+  return 9999;
+}
+
+function buildCalendar(monthInfo) {
+  const {index: month, year} = monthInfo;
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const daysInMonth = new Date(year, month, 0).getDate();
+  
+  let grid = document.createElement('div');
+  grid.className = 'calendar-grid';
+  
+  const prevMonthDays = new Date(year, month - 1, 0).getDate();
+  for (let i = firstDay - 1; i >= 0; i--) {
+    let dayDiv = document.createElement('div');
+    dayDiv.className = 'day other-month';
+    let num = document.createElement('div');
+    num.className = 'day-number';
+    num.textContent = prevMonthDays - i;
+    dayDiv.appendChild(num);
+    grid.appendChild(dayDiv);
+  }
+  
+  for (let d = 1; d <= daysInMonth; d++) {
+    let dayDiv = document.createElement('div');
+    dayDiv.className = 'day';
+    dayDiv.dataset.month = month;
+    dayDiv.dataset.day = d;
+    
+    let num = document.createElement('div');
+    num.className = 'day-number';
+    num.textContent = d;
+    dayDiv.appendChild(num);
+    
+    const key = month + '-' + d;
+    const dayEvents = events[key] || [];
+    const ordered = [...dayEvents].sort((a, b) => parseSort(a[1]) - parseSort(b[1]));
+    
+    for (const [subj, time] of ordered) {
+      let ev = document.createElement('div');
+      if (subj === '备注') {
+        ev.className = 'event note';
+        ev.textContent = '📌 ' + time;
+      } else {
+        const cls = subjectClasses[subj] || '';
+        ev.className = 'event ' + cls + (time === '待定' ? ' tbd' : '');
+        ev.textContent = time === '待定' ? subj + ' ⏳' : subj + ' ' + time;
+      }
+      dayDiv.appendChild(ev);
+    }
+    
+    dayDiv.onclick = () => openEditor(month, d);
+    grid.appendChild(dayDiv);
+  }
+  
+  const totalCells = firstDay + daysInMonth;
+  const remaining = (7 - (totalCells % 7)) % 7;
+  for (let i = 1; i <= remaining; i++) {
+    let dayDiv = document.createElement('div');
+    dayDiv.className = 'day other-month';
+    let num = document.createElement('div');
+    num.className = 'day-number';
+    num.textContent = i;
+    dayDiv.appendChild(num);
+    grid.appendChild(dayDiv);
+  }
+  
+  return grid;
+}
+
+function renderAll() {
+  document.querySelectorAll('.calendar').forEach(c => c.remove());
+  months.forEach((m, idx) => {
+    let cal = document.createElement('div');
+    cal.className = 'calendar' + (idx === 1 ? ' active' : '');
+    cal.id = 'cal-' + idx;
+    
+    let header = document.createElement('div');
+    header.className = 'calendar-header';
+    weekdayNames.forEach(w => {
+      let d = document.createElement('div');
+      d.textContent = w;
+      header.appendChild(d);
+    });
+    cal.appendChild(header);
+    cal.appendChild(buildCalendar(m));
+    document.getElementById('calendars').appendChild(cal);
+  });
+}
+
+// ══════════════════════════
+// Editor Modal
+// ══════════════════════════
+function openEditor(month, day) {
+  const key = month + '-' + day;
+  const dayEvents = events[key] || [];
+  
+  let overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+  
+  let modal = document.createElement('div');
+  modal.className = 'modal';
+  
+  modal.innerHTML = '<h3>' + month + '月' + day + '日 编辑</h3>';
+  
+  // Current events list
+  let listDiv = document.createElement('div');
+  listDiv.className = 'current-events';
+  listDiv.id = 'modalEventList';
+  
+  function renderEventList() {
+    const current = events[key] || [];
+    const ordered = [...current].sort((a, b) => parseSort(a[1]) - parseSort(b[1]));
+    listDiv.innerHTML = '';
+    if (ordered.length === 0) {
+      listDiv.innerHTML = '<div style="color:#c7c7cc;font-size:13px;padding:8px 0;">暂无安排</div>';
+      return;
+    }
+    for (let i = 0; i < ordered.length; i++) {
+      const [subj, time] = ordered[i];
+      let row = document.createElement('div');
+      row.className = 'event-row';
+      
+      let label = document.createElement('span');
+      if (subj === '备注') {
+        label.style.cssText = 'background:#fff9db;padding:2px 8px;border-radius:3px;border-left:2px solid #f0d060;';
+        label.textContent = '📌 ' + time;
+      } else {
+        const cls = subjectClasses[subj] || '';
+        label.textContent = subj + ' ' + time;
+      }
+      
+      let del = document.createElement('span');
+      del.className = 'del';
+      del.textContent = '✕';
+      del.onclick = (e) => {
+        e.stopPropagation();
+        current.splice(i, 1);
+        if (current.length === 0) {
+          delete events[key];
+        } else {
+          events[key] = current;
+        }
+        saveData(events);
+        renderEventList();
+        renderAll();
+        showToast('已删除');
+      };
+      
+      row.appendChild(label);
+      row.appendChild(del);
+      listDiv.appendChild(row);
+    }
+  }
+  renderEventList();
+  modal.appendChild(listDiv);
+  
+  // Add form
+  let form = document.createElement('div');
+  form.innerHTML = `
+    <div class="field">
+      <label>科目</label>
+      <select id="modalSubject">
+        <option value="数学">数学</option>
+        <option value="物理">物理</option>
+        <option value="化学">化学</option>
+        <option value="生物">生物</option>
+        <option value="备注">备注</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>时间</label>
+      <input id="modalTime" placeholder="如 18:30-20:30">
+    </div>
+  `;
+  modal.appendChild(form);
+  
+  let actions = document.createElement('div');
+  actions.className = 'modal-actions';
+  
+  let cancelBtn = document.createElement('button');
+  cancelBtn.textContent = '取消';
+  cancelBtn.onclick = () => overlay.remove();
+  actions.appendChild(cancelBtn);
+  
+  let addBtn = document.createElement('button');
+  addBtn.className = 'primary';
+  addBtn.textContent = '添加';
+  addBtn.onclick = () => {
+    const subj = document.getElementById('modalSubject').value;
+    const time = document.getElementById('modalTime').value.trim();
+    if (!time) { showToast('请填写时间'); return; }
+    
+    if (!events[key]) events[key] = [];
+    events[key].push([subj, time]);
+    saveData(events);
+    renderEventList();
+    renderAll();
+    document.getElementById('modalTime').value = '';
+    showToast('已添加');
+  };
+  actions.appendChild(addBtn);
+  
+  modal.appendChild(actions);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  setTimeout(() => document.getElementById('modalTime').focus(), 100);
+}
+
+// ══════════════════════════
+// Export / Import / Share
+// ══════════════════════════
+function exportData() {
+  let data = JSON.stringify(events, null, 2);
+  let blob = new Blob([data], {type: 'application/json'});
+  let url = URL.createObjectURL(blob);
+  let a = document.createElement('a');
+  a.href = url;
+  a.download = '暑期补习安排.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('已导出');
+}
+
+function importData(event) {
+  let file = event.target.files[0];
+  if (!file) return;
+  let reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      let data = JSON.parse(e.target.result);
+      events = data;
+      saveData(events);
+      renderAll();
+      showToast('导入成功！');
+    } catch(err) {
+      showToast('导入失败：格式不对');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function shareToWechat() {
+  // Copy the page URL to clipboard for the user to paste in WeChat
+  let url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('链接已复制，发到微信即可');
+  }).catch(() => {
+    // Fallback: create a share text
+    let text = '暑期补习日历 - 在线版\n' + window.location.href;
+    showToast('复制链接发到微信家庭群');
+  });
+}
+
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ══════════════════════════
+// Init
+// ══════════════════════════
+const monthNav = document.getElementById('monthNav');
+months.forEach((m, idx) => {
+  let btn = document.createElement('button');
+  btn.textContent = m.name;
+  btn.dataset.idx = idx;
+  if (idx === 1) btn.className = 'active';
+  btn.onclick = () => switchMonth(idx);
+  monthNav.appendChild(btn);
+});
+
+function switchMonth(idx) {
+  document.querySelectorAll('.calendar').forEach(c => c.classList.remove('active'));
+  document.getElementById('cal-' + idx).classList.add('active');
+  document.querySelectorAll('.month-nav button').forEach((b, i) => {
+    b.className = i === idx ? 'active' : '';
+  });
+}
+
+renderAll();
+</script>
+</body>
+</html>
