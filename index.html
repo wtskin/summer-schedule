@@ -487,6 +487,7 @@ function calcEnd(){
 }
 function editor(m,d){
   var key=m+'-'+d;
+  editIdx=-1;
   var list=evs[key]||[];
   
   var mask=document.createElement('div');
@@ -510,9 +511,11 @@ function editor(m,d){
       var label=document.createElement('span');
       label.style.cursor='pointer';
       if(s=='备注'){label.innerHTML='📌 '+t}else{label.textContent=s+' '+t}
+      var editIdx=-1;
       label.onclick=function(){
-        var mt=t.match(/^(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})(?:\s+(.*))?$/);
+        editIdx=i;
         document.getElementById('sSel').value=s;
+        var mt=t.match(/^(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})(?:\s+(.*))?$/);
         if(mt){
           document.getElementById('sH').value=mt[1].padStart(2,'0');
           document.getElementById('sM').value=mt[2].padStart(2,'0');
@@ -526,9 +529,6 @@ function editor(m,d){
         }else{
           document.getElementById('tCustom').value=t;
         }
-        cur.splice(i,1);
-        if(cur.length)evs[key]=cur;else delete evs[key];
-        save();renderList();renderAll()
       };
       var del=document.createElement('span');
       del.className='del';
