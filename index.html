@@ -97,9 +97,244 @@ table.cal td .ev.tbd{background:#f0f0f0;color:#86868b;font-style:italic}
 <script>
 // ========== Data ==========
 const DATA = {
-  "6-22":[["备注","合格考集训"]],"6-23":[["备注","合格考集训"]],"6-24":[["备注","合格考集训"]],"6-25":[["备注","合格考集训"]],"6-26":[["备注","合格考集训"]],"6-28":[["备注","合格考"]],"6-29":[["物理","19:00试课"],["备注","合格考"]],
-  "7-2":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-4":[["生物","15:30-17:30"],["数学","待定"],["备注","晚上外出"]],"7-6":[["数学","18:30-20:30"]],"7-7":[["生物","15:30-17:30"]],"7-8":[["数学","18:30-20:30"]],"7-9":[["生物","15:30-17:30"]],"7-10":[["数学","18:30-20:30"]],"7-11":[["生物","15:30-17:30"]],"7-12":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-14":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-16":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-18":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-20":[["数学","18:30-20:30"]],"7-21":[["生物","15:30-17:30"]],"7-22":[["数学","18:30-20:30"]],"7-23":[["生物","15:30-17:30"]],"7-24":[["数学","18:30-20:30"]],"7-25":[["生物","15:30-17:30"]],"7-26":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-28":[["数学","9:30-11:30"],["生物","15:30-17:30"]],"7-30":[["数学","9:30-11:30"],["生物","15:30-17:30"]],
-  "8-1":[["数学","9:30-11:30"],["生物","15:30-17:30"]],"8-3":[["数学","9:30-11:30"]],"8-4":[["生物","15:30-17:30"]],"8-5":[["数学","9:30-11:30"]],"8-6":[["生物","15:30-17:30"]],"8-7":[["数学","9:30-11:30"]],"8-8":[["生物","15:30-17:30"]],"8-9":[["数学","9:30-11:30"],["生物","15:30-17:30"]],"8-11":[["数学","9:30-11:30"]]
+  "6-22": [
+    [
+      "备注",
+      "合格考集训"
+    ]
+  ],
+  "6-23": [
+    [
+      "备注",
+      "合格考集训"
+    ]
+  ],
+  "6-24": [
+    [
+      "备注",
+      "合格考集训"
+    ]
+  ],
+  "6-25": [
+    [
+      "备注",
+      "合格考集训"
+    ]
+  ],
+  "6-26": [
+    [
+      "备注",
+      "合格考集训"
+    ]
+  ],
+  "6-28": [
+    [
+      "备注",
+      "合格考"
+    ]
+  ],
+  "6-29": [
+    [
+      "物理",
+      "19:00试课"
+    ],
+    [
+      "备注",
+      "合格考"
+    ]
+  ],
+  "7-2": [
+    [
+      "数学",
+      "18:30-20:30"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "7-4": [
+    [
+      "数学",
+      "待定"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ],
+    [
+      "备注",
+      "晚上外出"
+    ]
+  ],
+  "7-7": [
+    [
+      "数学",
+      "18:30-20:30 函数综合复习"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "7-9": [
+    [
+      "数学",
+      "18:30-20:30 三角函数(1)"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "7-11": [
+    [
+      "数学",
+      "18:30-20:30 三角函数(2)"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "7-14": [
+    [
+      "数学",
+      "18:30-20:30 数列(1)"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "7-16": [
+    [
+      "数学",
+      "18:30-20:30 数列(2)"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "7-18": [
+    [
+      "数学",
+      "18:30-20:30 向量"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "7-21": [
+    [
+      "数学",
+      "18:30-20:30 解析几何(1)"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "7-23": [
+    [
+      "数学",
+      "18:30-20:30 解析几何(2)"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ],
+    [
+      "备注",
+      "合格考集训"
+    ]
+  ],
+  "7-25": [
+    [
+      "数学",
+      "18:30-20:30 立体几何(1)"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ],
+    [
+      "备注",
+      "合格考集训"
+    ]
+  ],
+  "7-28": [
+    [
+      "数学",
+      "9:30-11:30 立体几何(2)"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ],
+    [
+      "备注",
+      "合格考"
+    ]
+  ],
+  "7-30": [
+    [
+      "数学",
+      "9:30-11:30 导数(1)"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "8-1": [
+    [
+      "数学",
+      "9:30-11:30 导数(2)"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "8-4": [
+    [
+      "数学",
+      "9:30-11:30 概率统计"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "8-6": [
+    [
+      "数学",
+      "9:30-11:30 不等式"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "8-8": [
+    [
+      "数学",
+      "9:30-11:30 综合复习(1)"
+    ],
+    [
+      "生物",
+      "15:30-17:30"
+    ]
+  ],
+  "8-11": [
+    [
+      "数学",
+      "9:30-11:30 综合复习(2)"
+    ]
+  ]
 };
 const SUBJ = {'数学':'math','物理':'physics','化学':'chemistry','生物':'biology'};
 const WNAMES = ['一','二','三','四','五','六','日'];
@@ -249,6 +484,17 @@ function switchM(idx){
 }
 
 // ========== Editor ==========
+function calcEnd(){
+  var sH=parseInt(document.getElementById('sH').value);
+  var sM=parseInt(document.getElementById('sM').value);
+  var dur=parseFloat(document.getElementById('durSel').value);
+  if(sH>=0&&sM>=0&&dur){
+    var total=sH*60+sM+Math.round(dur*60);
+    var eH=Math.floor(total/60)%24;
+    var eM=total%60;
+    document.getElementById('endDisplay').textContent=String(eH).padStart(2,'0')+':'+String(eM).padStart(2,'0');
+  }
+}
 function editor(m,d){
   var key=m+'-'+d;
   var list=evs[key]||[];
@@ -289,10 +535,22 @@ function editor(m,d){
   box.appendChild(elist);
   
   // Form
+  function timeSelects(prefix){
+    var h='<select id="'+prefix+'H" style="width:70px" onchange="calcEnd()">';
+    for(var i=0;i<24;i++)h+='<option>'+String(i).padStart(2,'0')+'</option>';
+    h+='</select><span style="margin:0 2px;color:#86868b">:</span>'+
+       '<select id="'+prefix+'M" style="width:70px" onchange="calcEnd()">';
+    for(var i=0;i<60;i+=30)h+='<option>'+String(i).padStart(2,'0')+'</option>';
+    return h+'</select>';
+  }
   var fdiv=document.createElement('div');
   fdiv.innerHTML=
     '<div class="f"><label>科目</label><select id="sSel"><option>数学</option><option>物理</option><option>化学</option><option>生物</option><option>备注</option></select></div>'+
-    '<div class="f"><label>时间</label><input id="tInp" placeholder="如 18:30-20:30"></div>';
+    '<div class="f"><label>开始时间</label><div>'+timeSelects('s')+'</div></div>'+
+    '<div class="f"><label>时长</label><select id="durSel" style="width:100px" onchange="calcEnd()">'+
+    '<option value="1">1 小时</option><option value="1.5">1.5 小时</option><option value="2" selected>2 小时</option></select>'+
+    '<span style="margin-left:12px;color:#1d1d1f;font-size:13px">→ <strong id="endDisplay"></strong></span></div>'+
+    '<div class="f"><label>备注（选填）</label><input id="tCustom" placeholder="如：试课"></div>';
   box.appendChild(fdiv);
   
   var btns=document.createElement('div');
@@ -307,12 +565,30 @@ function editor(m,d){
   addBtn.textContent='添加';
   addBtn.onclick=function(){
     var subj=document.getElementById('sSel').value;
-    var time=document.getElementById('tInp').value.trim();
-    if(!time){toast('请填写时间');return}
+    var sH=document.getElementById('sH').value;
+    var sM=document.getElementById('sM').value;
+    var eH=document.getElementById('eH').value;
+    var eM=document.getElementById('eM').value;
+    var custom=document.getElementById('tCustom').value.trim();
+    var time;
+    if(sH&&sM&&eH&&eM){
+      time=sH+':'+sM+'-'+eH+':'+eM;
+    }else if(sH&&sM){
+      time=sH+':'+sM+(custom?' '+custom:'');
+    }else if(custom){
+      time=custom;
+    }else{
+      toast('请选择时间或填写备注');return
+    }
+    if(custom&&sH&&eH)time+=' '+custom;
     if(!evs[key])evs[key]=[];
     evs[key].push([subj,time]);
     save();renderList();renderAll();
-    document.getElementById('tInp').value='';
+    document.getElementById('sH').value='09';
+    document.getElementById('sM').value='00';
+    document.getElementById('eH').value='10';
+    document.getElementById('eM').value='00';
+    document.getElementById('tCustom').value='';
     toast('已添加');
   };
   btns.appendChild(addBtn);
