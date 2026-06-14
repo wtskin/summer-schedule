@@ -593,7 +593,10 @@ function editor(m,d){
     var dur=parseFloat(document.getElementById('durSel').value);
     var custom=document.getElementById('tCustom').value.trim();
     var time;
-    if(!isNaN(sH)&&!isNaN(sM)&&dur){
+    if(subj==='备注'){
+      if(!custom){toast('请输入备注内容');return}
+      time=custom;
+    }else if(!isNaN(sH)&&!isNaN(sM)&&dur){
       var total=sH*60+sM+Math.round(dur*60);
       var eH=Math.floor(total/60)%24;
       var eM=total%60;
@@ -603,7 +606,7 @@ function editor(m,d){
     }else{
       toast('请选择时间');return
     }
-    if(custom&&time&&!isNaN(sH))time+=' '+custom;
+    if(custom&&time&&!isNaN(sH)&&subj!=='备注')time+=' '+custom;
     if(editIdx>=0&&editIdx<cur.length){
       cur[editIdx]=[subj,time];
       evs[key]=cur;
