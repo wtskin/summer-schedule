@@ -474,12 +474,13 @@ function switchM(idx){
 }
 
 // ========== Editor ==========
-function toggleTimeFields(){
+function toggleTimeFields(){try{
   var isNote=document.getElementById('sSel').value==='备注';
   var tf=document.getElementById('timeFields');
   var cl=document.getElementById('customLabel');
   if(tf){tf.style.display=isNote?'none':'block'}
   if(cl){cl.textContent=isNote?'内容':'备注（选填）'}
+}catch(e){}
 }
 function calcEnd(){
   var sH=parseInt(document.getElementById('sH').value);
@@ -572,7 +573,7 @@ function editor(m,d){
     '<span style="margin-left:12px;color:#1d1d1f;font-size:13px">→ <strong id="endDisplay"></strong></span></div>'+
     '</div>'+
     '<div class="f"><label id="customLabel">备注（选填）</label><input id="tCustom" placeholder="如：试课"></div>';
-  box.appendChild(fdiv);toggleTimeFields();
+  box.appendChild(fdiv);
   
   var btns=document.createElement('div');
   btns.className='btns';
@@ -624,7 +625,7 @@ function editor(m,d){
   box.appendChild(btns);
   
   mask.appendChild(box);
-  document.body.appendChild(mask);
+  document.body.appendChild(mask);toggleTimeFields();
   setTimeout(function(){document.getElementById('sH').focus()},100);
 }
 
