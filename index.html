@@ -575,8 +575,6 @@ function editor(m,d){
   var addBtn=document.createElement('button');
   addBtn.className='primary';
   addBtn.textContent='添加';
-  label.onclick=function(){addBtn.textContent='保存'};
-  editIdx=-1;function checkEditing(){addBtn.textContent=editIdx>=0?'保存':'添加'}
   addBtn.onclick=function(){
     var cur=evs[key]||[];
     var subj=document.getElementById('sSel').value;
