@@ -74,9 +74,6 @@ table.cal td .ev.tbd{background:#f0f0f0;color:#86868b;font-style:italic}
   <div class="header">
     <h1>📅 暑期补习日历</h1>
     <div class="actions">
-      <button onclick="exp()">📤 导出</button>
-      <button onclick="document.getElementById('imp').click()">📥 导入</button>
-      <input type="file" id="imp" accept=".json" style="display:none" onchange="imp(event)">
       <button class="primary" onclick="share()">💬 分享</button><a href="数学暑期复习计划.html" style="text-decoration:none"><button style="background:#e8e8ed">📐 数学复习计划</button></a>
     </div>
   </div>
@@ -600,27 +597,8 @@ function editor(m,d){
 }
 
 // ========== Export/Import/Share ==========
-function exp(){
-  var blob=new Blob([JSON.stringify(evs,null,2)],{type:'application/json'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;a.download='暑期补习安排.json';
-  a.click();URL.revokeObjectURL(url);
-  toast('已导出');
-}
-function imp(e){
-  var file=e.target.files[0];if(!file)return;
-  var r=new FileReader();
-  r.onload=function(e){
-    try{
-      var d=JSON.parse(e.target.result);
-      evs=d;save();renderAll();
-      toast('导入成功');
-    }catch(err){toast('导入失败')}
-  };
-  r.readAsText(file);
-  e.target.value='';
-}
+
+
 function share(){
   var url=window.location.href;
   if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){toast('链接已复制')})}
