@@ -424,7 +424,7 @@ function monthCal(mo){
       td.appendChild(ev);
     });
     
-    td.onclick=function(mm,dd){return function(){editor(mm,dd)}}(m,d);
+    td.onclick=function(mm,dd){return function(){try{editor(mm,dd)}catch(e){alert('出错:'+e.message+'\n'+e.stack)}}}(m,d);
     row.appendChild(td);
   }
   
@@ -618,7 +618,7 @@ function editor(m,d){
   
   mask.appendChild(box);
   document.body.appendChild(mask);
-  setTimeout(function(){document.getElementById('tInp').focus()},100);
+  setTimeout(function(){document.getElementById('sH').focus()},100);
 }
 
 // ========== Export/Import/Share ==========
