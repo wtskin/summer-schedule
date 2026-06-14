@@ -514,6 +514,7 @@ function editor(m,d){
       editIdx=-1;
       label.onclick=function(){
         editIdx=i;
+        addBtn.textContent='保存';
         document.getElementById('sSel').value=s;
         var mt=t.match(/^(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})(?:\s+(.*))?$/);
         if(mt){
@@ -574,34 +575,44 @@ function editor(m,d){
   var addBtn=document.createElement('button');
   addBtn.className='primary';
   addBtn.textContent='添加';
+  label.onclick=function(){addBtn.textContent='保存'};
+  editIdx=-1;function checkEditing(){addBtn.textContent=editIdx>=0?'保存':'添加'}
   addBtn.onclick=function(){
+    var cur=evs[key]||[];
     var subj=document.getElementById('sSel').value;
-    var sH=document.getElementById('sH').value;
-    var sM=document.getElementById('sM').value;
-    var eH=document.getElementById('eH').value;
-    var eM=document.getElementById('eM').value;
+    var sH=parseInt(document.getElementById('sH').value);
+    var sM=parseInt(document.getElementById('sM').value);
+    var dur=parseFloat(document.getElementById('durSel').value);
     var custom=document.getElementById('tCustom').value.trim();
     var time;
-    if(sH&&sM&&eH&&eM){
-      time=sH+':'+sM+'-'+eH+':'+eM;
-    }else if(sH&&sM){
-      time=sH+':'+sM+(custom?' '+custom:'');
+    if(!isNaN(sH)&&!isNaN(sM)&&dur){
+      var total=sH*60+sM+Math.round(dur*60);
+      var eH=Math.floor(total/60)%24;
+      var eM=total%60;
+      time=String(sH).padStart(2,'0')+':'+String(sM).padStart(2,'0')+'-'+String(eH).padStart(2,'0')+':'+String(eM).padStart(2,'0');
     }else if(custom){
       time=custom;
     }else{
-      toast('请选择时间或填写备注');return
+      toast('请选择时间');return
     }
-    if(custom&&sH&&eH)time+=' '+custom;
-    if(!evs[key])evs[key]=[];
-    evs[key].push([subj,time]);
+    if(custom&&time&&!isNaN(sH))time+=' '+custom;
+    if(editIdx>=0&&editIdx<cur.length){
+      cur[editIdx]=[subj,time];
+      evs[key]=cur;
+    }else{
+      if(!evs[key])evs[key]=[];
+      evs[key].push([subj,time]);
+    }
     save();renderList();renderAll();
+    editIdx=-1;
     document.getElementById('sH').value='09';
     document.getElementById('sM').value='00';
-    document.getElementById('eH').value='10';
-    document.getElementById('eM').value='00';
+    document.getElementById('durSel').value='2';
     document.getElementById('tCustom').value='';
+    document.getElementById('endDisplay').textContent='';
+    addBtn.textContent='添加';
     toast('已添加');
-  };
+  }
   btns.appendChild(addBtn);
   box.appendChild(btns);
   
