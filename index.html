@@ -447,17 +447,22 @@ function renderAll(){
   container.innerHTML='';
   MONTHS.forEach(function(mo,idx){
     var cal=monthCal(mo);
-    if(idx===1)cal.className='cal active';
+    if(idx===defIdx)cal.className='cal active';
     container.appendChild(cal);
   });
 }
 
 // ========== Navigation ==========
 var nav=document.getElementById('nav');
+// Default to current month
+var defIdx=0,cm=(new Date()).getMonth()+1;
+MONTHS.forEach(function(m,idx){
+  if(m.i===cm)defIdx=idx;
+});
 MONTHS.forEach(function(m,idx){
   var btn=document.createElement('button');
   btn.textContent=m.n;
-  if(idx===1)btn.className='active';
+  btn.className=idx===defIdx?'active':'';
   btn.onclick=function(){switchM(idx)};
   nav.appendChild(btn);
 });
@@ -503,7 +508,28 @@ function editor(m,d){
       var row=document.createElement('div');
       row.className='erow';
       var label=document.createElement('span');
+      label.style.cursor='pointer';
       if(s=='备注'){label.innerHTML='📌 '+t}else{label.textContent=s+' '+t}
+      label.onclick=function(){
+        var mt=t.match(/^(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})(?:\s+(.*))?$/);
+        document.getElementById('sSel').value=s;
+        if(mt){
+          document.getElementById('sH').value=mt[1].padStart(2,'0');
+          document.getElementById('sM').value=mt[2].padStart(2,'0');
+          var sm=parseInt(mt[1])*60+parseInt(mt[2]);
+          var em=parseInt(mt[3])*60+parseInt(mt[4]);
+          var dm=em-sm,ops=[60,90,120],cl='1.5',md=999;
+          for(var di=0;di<ops.length;di++){var df=Math.abs(dm-ops[di]);if(df<md){md=df;cl=String(ops[di]/60);}}
+          document.getElementById('durSel').value=cl;
+          document.getElementById('tCustom').value=mt[5]||'';
+          calcEnd();
+        }else{
+          document.getElementById('tCustom').value=t;
+        }
+        cur.splice(i,1);
+        if(cur.length)evs[key]=cur;else delete evs[key];
+        save();renderList();renderAll()
+      };
       var del=document.createElement('span');
       del.className='del';
       del.textContent='✕';
