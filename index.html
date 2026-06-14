@@ -59,6 +59,8 @@
     padding: 10px 6px; text-align: center; font-size: 12px;
     font-weight: 600; color: #6e6e73;
   }
+  .calendar-header div:last-child { color: #e34040; } /* Sunday red */
+  }
   .calendar-grid {
     display: grid; grid-template-columns: repeat(7, 1fr);
   }
@@ -255,7 +257,7 @@ function saveData(events) {
 
 let events = loadData();
 const subjectClasses = {'数学':'math','物理':'physics','化学':'chemistry','生物':'biology'};
-const weekdayNames = ['日','一','二','三','四','五','六'];
+const weekdayNames = ['一','二','三','四','五','六','日'];
 const months = [
   {index: 6, year: 2026, name: '6月'},
   {index: 7, year: 2026, name: '7月'},
@@ -272,7 +274,7 @@ function parseSort(s) {
 
 function buildCalendar(monthInfo) {
   const {index: month, year} = monthInfo;
-  const firstDay = new Date(year, month - 1, 1).getDay();
+  const firstDay = (new Date(year, month - 1, 1).getDay() + 6) % 7;
   const daysInMonth = new Date(year, month, 0).getDate();
   
   let grid = document.createElement('div');
