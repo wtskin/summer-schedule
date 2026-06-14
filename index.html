@@ -172,7 +172,7 @@
   <div class="header">
     <div>
       <h1>📅 暑期补习日历</h1>
-      <div class="subtitle" id="lastSaved">2026年6月19日 — 8月31日</div>
+      <div class="subtitle" id="lastSaved">2026年6月19日 — 8月31日 · 点击日期可编辑</div>
     </div>
     <div class="header-actions">
       <button onclick="exportData()" title="分享给家人">📤 导出</button>
@@ -241,21 +241,16 @@ const DEFAULT_EVENTS = {
 };
 
 function loadData() {
-  let saved = localStorage.getItem('summer_schedule_2026');
-  if (saved) {
-    try { return JSON.parse(saved); } catch(e) {}
-  }
   return JSON.parse(JSON.stringify(DEFAULT_EVENTS));
 }
 
 function saveData(events) {
-  localStorage.setItem('summer_schedule_2026', JSON.stringify(events));
-  let now = new Date();
-  let s = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-  document.getElementById('lastSaved').textContent = '自动保存 · ' + s;
+  // no-op
 }
 
 let events = loadData();
+// Clear legacy localStorage data
+try { localStorage.removeItem('summer_schedule_2026'); } catch(e) {}
 const subjectClasses = {'数学':'math','物理':'physics','化学':'chemistry','生物':'biology'};
 const weekdayNames = ['一','二','三','四','五','六','日'];
 const months = [
