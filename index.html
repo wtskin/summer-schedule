@@ -474,6 +474,13 @@ function switchM(idx){
 }
 
 // ========== Editor ==========
+function toggleTimeFields(){
+  var isNote=document.getElementById('sSel').value==='备注';
+  var tf=document.getElementById('timeFields');
+  var cl=document.getElementById('customLabel');
+  if(tf){tf.style.display=isNote?'none':'block'}
+  if(cl){cl.textContent=isNote?'内容':'备注（选填）'}
+}
 function calcEnd(){
   var sH=parseInt(document.getElementById('sH').value);
   var sM=parseInt(document.getElementById('sM').value);
@@ -557,13 +564,15 @@ function editor(m,d){
   }
   var fdiv=document.createElement('div');
   fdiv.innerHTML=
-    '<div class="f"><label>科目</label><select id="sSel"><option>数学</option><option>物理</option><option>化学</option><option>生物</option><option>备注</option></select></div>'+
+    '<div class="f"><label>科目</label><select id="sSel" onchange="toggleTimeFields()"><option>数学</option><option>物理</option><option>化学</option><option>生物</option><option>备注</option></select></div>'+
+    '<div id="timeFields">'+
     '<div class="f"><label>开始时间</label><div>'+timeSelects('s')+'</div></div>'+
     '<div class="f"><label>时长</label><select id="durSel" style="width:100px" onchange="calcEnd()">'+
     '<option value="1">1 小时</option><option value="1.5">1.5 小时</option><option value="2" selected>2 小时</option></select>'+
     '<span style="margin-left:12px;color:#1d1d1f;font-size:13px">→ <strong id="endDisplay"></strong></span></div>'+
-    '<div class="f"><label>备注（选填）</label><input id="tCustom" placeholder="如：试课"></div>';
-  box.appendChild(fdiv);
+    '</div>'+
+    '<div class="f"><label id="customLabel">备注（选填）</label><input id="tCustom" placeholder="如：试课"></div>';
+  box.appendChild(fdiv);toggleTimeFields();
   
   var btns=document.createElement('div');
   btns.className='btns';
