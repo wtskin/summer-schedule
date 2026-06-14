@@ -2,552 +2,364 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>暑期补习日历</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
-    background: #f5f5f7;
-    color: #1d1d1f;
-    padding: 24px;
-  }
-  .container { max-width: 1200px; margin: 0 auto; }
-  .header {
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-    margin-bottom: 20px;
-  }
-  .header h1 {
-    font-size: 26px; font-weight: 700; letter-spacing: -0.5px;
-  }
-  .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .header-actions button {
-    padding: 6px 14px; border-radius: 16px; border: 1.5px solid #d2d2d7;
-    background: #fff; font-size: 12px; font-weight: 500; cursor: pointer;
-    transition: all .15s; font-family: inherit;
-  }
-  .header-actions button:hover { background: #e8e8ed; }
-  .header-actions .primary {
-    background: #0071e3; color: #fff; border-color: #0071e3;
-  }
-  .header-actions .primary:hover { background: #0077ed; }
-  .subtitle {
-    color: #86868b; font-size: 14px; margin-bottom: 16px;
-  }
-  .month-nav {
-    display: flex; gap: 8px; margin-bottom: 16px;
-  }
-  .month-nav button {
-    padding: 8px 20px; border-radius: 20px; border: 1.5px solid #d2d2d7;
-    background: #fff; font-size: 14px; font-weight: 500; cursor: pointer;
-    transition: all .15s; font-family: inherit;
-  }
-  .month-nav button.active {
-    background: #0071e3; color: #fff; border-color: #0071e3;
-  }
-  .month-nav button:hover:not(.active) { background: #e8e8ed; }
-  .calendar {
-    background: #fff; border-radius: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
-    overflow: hidden; display: none;
-  }
-  .calendar.active { display: block; }
-  .calendar-header {
-    display: grid; grid-template-columns: repeat(7, 1fr);
-    background: #f5f5f7; border-bottom: 1px solid #e8e8ed;
-  }
-  .calendar-header div {
-    padding: 10px 6px; text-align: center; font-size: 12px;
-    font-weight: 600; color: #6e6e73;
-  }
-  .calendar-header div:last-child { color: #e34040; } /* Sunday red */
-  }
-  .calendar-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr);
-  }
-  .day {
-    min-height: 95px; padding: 5px; border-right: 1px solid #f0f0f2;
-    border-bottom: 1px solid #f0f0f2; cursor: pointer;
-    transition: background .1s;
-  }
-  .day:hover { background: #f0f7ff; }
-  .day:nth-child(7n) { border-right: none; }
-  .day.other-month { background: #fafafa; }
-  .day.other-month:hover { background: #f0f0f2; }
-  .day-number {
-    font-size: 12px; font-weight: 500; color: #1d1d1f; margin-bottom: 2px;
-  }
-  .day.other-month .day-number { color: #c7c7cc; }
-  .event {
-    font-size: 10px; padding: 2px 4px; border-radius: 3px;
-    margin-bottom: 1px; line-height: 1.35;
-  }
-  .event.math { background: #d4f5dc; color: #1a6b2e; }
-  .event.physics { background: #e2d5f5; color: #5a3d8a; }
-  .event.chemistry { background: #ffe4cc; color: #8a4a00; }
-  .event.biology { background: #cce8f5; color: #1a5a7a; }
-  .event.note {
-    background: #fff9db; color: #8a7a00; font-size: 9.5px;
-    border-left: 2px solid #f0d060;
-  }
-  .event.tbd { background: #f0f0f0; color: #86868b; font-style: italic; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;background:#f5f5f7;color:#1d1d1f;padding:20px}
+.container{max-width:1100px;margin:0 auto}
+.header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.header h1{font-size:24px;font-weight:700;letter-spacing:-.5px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.actions button{padding:6px 14px;border-radius:16px;border:1.5px solid #d2d2d7;background:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all.15s}
+.actions button:hover{background:#e8e8ed}
+.actions .primary{background:#0071e3;color:#fff;border-color:#0071e3}
+.actions .primary:hover{background:#0077ed}
+.sub{color:#86868b;font-size:13px;margin-bottom:14px}
+.nav{display:flex;gap:8px;margin-bottom:14px}
+.nav button{padding:7px 18px;border-radius:18px;border:1.5px solid #d2d2d7;background:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all.15s}
+.nav button.active{background:#0071e3;color:#fff;border-color:#0071e3}
+.nav button:hover:not(.active){background:#e8e8ed}
 
-  .legend {
-    display: flex; gap: 14px; margin-top: 16px; padding: 10px 0;
-    flex-wrap: wrap;
-  }
-  .legend-item {
-    display: flex; align-items: center; gap: 5px; font-size: 12px; color: #515154;
-  }
-  .legend-color {
-    width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0;
-  }
+table.cal{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);display:none;table-layout:fixed}
+table.cal.active{display:table}
+table.cal th{padding:8px 4px;text-align:center;font-size:12px;font-weight:600;background:#f5f5f7;color:#6e6e73;border-bottom:1px solid #e8e8ed}
+table.cal th:last-child{color:#e34040}
+table.cal td{padding:4px;text-align:left;vertical-align:top;border:1px solid #f0f0f2;width:14.2857%;height:88px;cursor:pointer;transition:background.1s}
+table.cal td:hover{background:#f0f7ff}
+table.cal td.other{background:#fafafa;color:#c7c7cc}
+table.cal td .dnum{font-size:12px;font-weight:500;margin-bottom:2px}
+table.cal td .ev{font-size:10px;padding:1px 4px;border-radius:3px;margin-bottom:1px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.cal td .ev.math{background:#d4f5dc;color:#1a6b2e}
+table.cal td .ev.physics{background:#e2d5f5;color:#5a3d8a}
+table.cal td .ev.chemistry{background:#ffe4cc;color:#8a4a00}
+table.cal td .ev.biology{background:#cce8f5;color:#1a5a7a}
+table.cal td .ev.note{background:#fff9db;color:#8a7a00;border-left:2px solid #f0d060}
+table.cal td .ev.tbd{background:#f0f0f0;color:#86868b;font-style:italic}
 
-  /* Modal */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.35);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 100; padding: 20px;
-  }
-  .modal {
-    background: #fff; border-radius: 14px; padding: 24px;
-    width: 380px; max-width: 100%; box-shadow: 0 8px 30px rgba(0,0,0,.15);
-  }
-  .modal h3 {
-    font-size: 17px; font-weight: 600; margin-bottom: 16px;
-  }
-  .modal .field {
-    margin-bottom: 12px;
-  }
-  .modal label {
-    font-size: 12px; font-weight: 500; color: #6e6e73; display: block; margin-bottom: 4px;
-  }
-  .modal select, .modal input {
-    width: 100%; padding: 8px 10px; border: 1.5px solid #d2d2d7; border-radius: 8px;
-    font-size: 14px; font-family: inherit; outline: none;
-  }
-  .modal select:focus, .modal input:focus { border-color: #0071e3; }
-  .modal-actions {
-    display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px;
-  }
-  .modal-actions button {
-    padding: 8px 18px; border-radius: 18px; border: 1.5px solid #d2d2d7;
-    background: #fff; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit;
-  }
-  .modal-actions .primary {
-    background: #0071e3; color: #fff; border-color: #0071e3;
-  }
-  .modal-actions .danger {
-    background: #fff; color: #e34040; border-color: #e34040;
-  }
-  .modal .current-events {
-    margin-bottom: 12px; max-height: 180px; overflow-y: auto;
-  }
-  .modal .event-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 5px 8px; border-radius: 6px; margin-bottom: 4px; font-size: 13px;
-  }
-  .modal .event-row .del {
-    cursor: pointer; color: #e34040; font-size: 16px; line-height: 1; padding: 0 4px;
-  }
-  .toast {
-    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-    background: #1d1d1f; color: #fff; padding: 10px 22px; border-radius: 10px;
-    font-size: 13px; z-index: 200; opacity: 0; transition: opacity .3s;
-    pointer-events: none;
-  }
-  .toast.show { opacity: 1; }
-  
-  @media (max-width: 768px) {
-    body { padding: 12px; }
-    h1 { font-size: 20px; }
-    .day { min-height: 68px; padding: 3px; }
-    .day-number { font-size: 11px; }
-    .event { font-size: 9px; }
-    .modal { width: 100%; }
-  }
+.legend{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:5px;font-size:12px;color:#515154}
+.legend .dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+
+/* Modal */
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+.box{background:#fff;border-radius:14px;padding:22px;width:360px;max-width:100%;box-shadow:0 8px 30px rgba(0,0,0,.15)}
+.box h3{font-size:16px;font-weight:600;margin-bottom:14px}
+.box .f{margin-bottom:10px}
+.box label{font-size:12px;font-weight:500;color:#6e6e73;display:block;margin-bottom:3px}
+.box select,.box input{width:100%;padding:7px 10px;border:1.5px solid #d2d2d7;border-radius:8px;font-size:13px;font-family:inherit;outline:none}
+.box select:focus,.box input:focus{border-color:#0071e3}
+.box .elist{max-height:160px;overflow-y:auto;margin-bottom:10px}
+.box .erow{display:flex;align-items:center;justify-content:space-between;padding:4px 6px;border-radius:5px;margin-bottom:3px;font-size:12px}
+.box .erow .del{cursor:pointer;color:#e34040;font-size:15px;line-height:1;padding:0 4px}
+.box .btns{display:flex;gap:6px;justify-content:flex-end;margin-top:14px}
+.box .btns button{padding:7px 16px;border-radius:16px;border:1.5px solid #d2d2d7;background:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+.box .btns .primary{background:#0071e3;color:#fff;border-color:#0071e3}
+.box .btns .danger{color:#e34040;border-color:#e34040}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1d1d1f;color:#fff;padding:10px 22px;border-radius:10px;font-size:13px;z-index:200;opacity:0;transition:opacity.3s;pointer-events:none}
+.toast.show{opacity:1}
+
+@media(max-width:640px){
+  body{padding:10px}
+  h1{font-size:20px}
+  table.cal td{height:60px;padding:2px}
+  table.cal td .ev{font-size:9px;white-space:normal;overflow:visible}
+}
 </style>
 </head>
 <body>
+
 <div class="container">
   <div class="header">
-    <div>
-      <h1>📅 暑期补习日历</h1>
-      <div class="subtitle" id="lastSaved">2026年6月19日 — 8月31日 · 点击日期可编辑</div>
-    </div>
-    <div class="header-actions">
-      <button onclick="exportData()" title="分享给家人">📤 导出</button>
-      <button onclick="document.getElementById('importInput').click()">📥 导入</button>
-      <input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(event)">
-      <button class="primary" onclick="shareToWechat()">💬 分享</button>
+    <h1>📅 暑期补习日历</h1>
+    <div class="actions">
+      <button onclick="exp()">📤 导出</button>
+      <button onclick="document.getElementById('imp').click()">📥 导入</button>
+      <input type="file" id="imp" accept=".json" style="display:none" onchange="imp(event)">
+      <button class="primary" onclick="share()">💬 分享</button>
     </div>
   </div>
-  
-  <div class="month-nav" id="monthNav"></div>
-  <div id="calendars"></div>
-  
+  <div class="sub">点击日期可编辑 · 6月19日 — 8月31日</div>
+  <div class="nav" id="nav"></div>
+  <div id="cals"></div>
   <div class="legend">
-    <div class="legend-item"><div class="legend-color" style="background:#d4f5dc"></div>数学</div>
-    <div class="legend-item"><div class="legend-color" style="background:#e2d5f5"></div>物理</div>
-    <div class="legend-item"><div class="legend-color" style="background:#ffe4cc"></div>化学</div>
-    <div class="legend-item"><div class="legend-color" style="background:#cce8f5"></div>生物</div>
-    <div class="legend-item"><div class="legend-color" style="background:#fff9db;border-left:2px solid #f0d060"></div>备注</div>
-    <div class="legend-item"><div class="legend-color" style="background:#f0f0f0"></div>待定</div>
+    <span><div class="dot" style="background:#d4f5dc"></div>数学</span>
+    <span><div class="dot" style="background:#e2d5f5"></div>物理</span>
+    <span><div class="dot" style="background:#ffe4cc"></div>化学</span>
+    <span><div class="dot" style="background:#cce8f5"></div>生物</span>
+    <span><div class="dot" style="background:#fff9db;border-left:2px solid #f0d060"></div>备注</span>
+    <span><div class="dot" style="background:#f0f0f0"></div>待定</span>
   </div>
 </div>
-<div id="toast" class="toast"></div>
+<div class="toast" id="toast"></div>
 
 <script>
-// ════════════════════════════════════════════
-// Data stored in localStorage for persistence
-// ════════════════════════════════════════════
-const DEFAULT_EVENTS = {
-  "6-22": [["备注","合格考集训"]],
-  "6-23": [["备注","合格考集训"]],
-  "6-24": [["备注","合格考集训"]],
-  "6-25": [["备注","合格考集训"]],
-  "6-26": [["备注","合格考集训"]],
-  "6-28": [["备注","合格考"]],
-  "6-29": [["物理","19:00试课"],["备注","合格考"]],
-  "7-2":  [["生物","15:30-17:30"],["数学","18:30-20:30"]],
-  "7-4":  [["生物","15:30-17:30"],["数学","待定"],["备注","晚上外出"]],
-  "7-6":  [["数学","18:30-20:30"]],
-  "7-7":  [["生物","15:30-17:30"]],
-  "7-8":  [["数学","18:30-20:30"]],
-  "7-9":  [["生物","15:30-17:30"]],
-  "7-10": [["数学","18:30-20:30"]],
-  "7-11": [["生物","15:30-17:30"]],
-  "7-12": [["生物","15:30-17:30"],["数学","18:30-20:30"]],
-  "7-14": [["生物","15:30-17:30"],["数学","18:30-20:30"]],
-  "7-16": [["生物","15:30-17:30"],["数学","18:30-20:30"]],
-  "7-18": [["生物","15:30-17:30"],["数学","18:30-20:30"]],
-  "7-20": [["数学","18:30-20:30"]],
-  "7-21": [["生物","15:30-17:30"]],
-  "7-22": [["数学","18:30-20:30"]],
-  "7-23": [["生物","15:30-17:30"]],
-  "7-24": [["数学","18:30-20:30"]],
-  "7-25": [["生物","15:30-17:30"]],
-  "7-26": [["生物","15:30-17:30"],["数学","18:30-20:30"]],
-  "7-28": [["数学","9:30-11:30"],["生物","15:30-17:30"]],
-  "7-30": [["数学","9:30-11:30"],["生物","15:30-17:30"]],
-  "8-1":  [["数学","9:30-11:30"],["生物","15:30-17:30"]],
-  "8-3":  [["数学","9:30-11:30"]],
-  "8-4":  [["生物","15:30-17:30"]],
-  "8-5":  [["数学","9:30-11:30"]],
-  "8-6":  [["生物","15:30-17:30"]],
-  "8-7":  [["数学","9:30-11:30"]],
-  "8-8":  [["生物","15:30-17:30"]],
-  "8-9":  [["数学","9:30-11:30"],["生物","15:30-17:30"]],
-  "8-11": [["数学","9:30-11:30"]],
+// ========== Data ==========
+const DATA = {
+  "6-22":[["备注","合格考集训"]],"6-23":[["备注","合格考集训"]],"6-24":[["备注","合格考集训"]],"6-25":[["备注","合格考集训"]],"6-26":[["备注","合格考集训"]],"6-28":[["备注","合格考"]],"6-29":[["物理","19:00试课"],["备注","合格考"]],
+  "7-2":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-4":[["生物","15:30-17:30"],["数学","待定"],["备注","晚上外出"]],"7-6":[["数学","18:30-20:30"]],"7-7":[["生物","15:30-17:30"]],"7-8":[["数学","18:30-20:30"]],"7-9":[["生物","15:30-17:30"]],"7-10":[["数学","18:30-20:30"]],"7-11":[["生物","15:30-17:30"]],"7-12":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-14":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-16":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-18":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-20":[["数学","18:30-20:30"]],"7-21":[["生物","15:30-17:30"]],"7-22":[["数学","18:30-20:30"]],"7-23":[["生物","15:30-17:30"]],"7-24":[["数学","18:30-20:30"]],"7-25":[["生物","15:30-17:30"]],"7-26":[["生物","15:30-17:30"],["数学","18:30-20:30"]],"7-28":[["数学","9:30-11:30"],["生物","15:30-17:30"]],"7-30":[["数学","9:30-11:30"],["生物","15:30-17:30"]],
+  "8-1":[["数学","9:30-11:30"],["生物","15:30-17:30"]],"8-3":[["数学","9:30-11:30"]],"8-4":[["生物","15:30-17:30"]],"8-5":[["数学","9:30-11:30"]],"8-6":[["生物","15:30-17:30"]],"8-7":[["数学","9:30-11:30"]],"8-8":[["生物","15:30-17:30"]],"8-9":[["数学","9:30-11:30"],["生物","15:30-17:30"]],"8-11":[["数学","9:30-11:30"]]
 };
+const SUBJ = {'数学':'math','物理':'physics','化学':'chemistry','生物':'biology'};
+const WNAMES = ['一','二','三','四','五','六','日'];
+const MONTHS = [{i:6,y:2026,n:'6月'},{i:7,y:2026,n:'7月'},{i:8,y:2026,n:'8月'}];
 
-function loadData() {
-  return JSON.parse(JSON.stringify(DEFAULT_EVENTS));
+function norm(d){return (d+6)%7}
+function timeSort(s){
+  if(s=='待定')return 9999;if(s=='备注')return 9998;
+  var m=s.match(/(\d{1,2}):(\d{2})/);return m?parseInt(m[1])*60+parseInt(m[2]):9999
 }
 
-function saveData(events) {
-  // no-op
+// ========== Storage ==========
+var evs;
+function load(){
+  try{var s=localStorage.getItem('ss_2026');if(s){evs=JSON.parse(s);return}}catch(e){}
+  evs=JSON.parse(JSON.stringify(DATA))
 }
-
-let events = loadData();
-// Clear legacy localStorage data
-try { localStorage.removeItem('summer_schedule_2026'); } catch(e) {}
-const subjectClasses = {'数学':'math','物理':'physics','化学':'chemistry','生物':'biology'};
-const weekdayNames = ['一','二','三','四','五','六','日'];
-const months = [
-  {index: 6, year: 2026, name: '6月'},
-  {index: 7, year: 2026, name: '7月'},
-  {index: 8, year: 2026, name: '8月'}
-];
-
-function parseSort(s) {
-  if (s === '待定') return 9999;
-  if (s === '备注') return 9998;
-  let m = s.match(/(\d{1,2}):(\d{2})/);
-  if (m) return parseInt(m[1])*60 + parseInt(m[2]);
-  return 9999;
+function save(){
+  try{localStorage.setItem('ss_2026',JSON.stringify(evs))}catch(e){}
 }
+load();
 
-function buildCalendar(monthInfo) {
-  const {index: month, year} = monthInfo;
-  const firstDay = (new Date(year, month - 1, 1).getDay() + 6) % 7;
-  const daysInMonth = new Date(year, month, 0).getDate();
+// ========== Rendering ==========
+function monthCal(mo){
+  var {i:m,y:y}=mo;
+  var first=new Date(y,m-1,1).getDay();
+  var f=norm(first); // 0=Mon,6=Sun
+  var days=new Date(y,m,0).getDate();
+  var prev=new Date(y,m-1,0).getDate();
+  var t=f+days,rem=(7-t%7)%7;
   
-  let grid = document.createElement('div');
-  grid.className = 'calendar-grid';
+  var tbl=document.createElement('table');
+  tbl.className='cal';
+  tbl.id='cal-'+m;
   
-  const prevMonthDays = new Date(year, month - 1, 0).getDate();
-  for (let i = firstDay - 1; i >= 0; i--) {
-    let dayDiv = document.createElement('div');
-    dayDiv.className = 'day other-month';
-    let num = document.createElement('div');
-    num.className = 'day-number';
-    num.textContent = prevMonthDays - i;
-    dayDiv.appendChild(num);
-    grid.appendChild(dayDiv);
+  // Header
+  var thead=document.createElement('thead');
+  var hr=document.createElement('tr');
+  WNAMES.forEach(function(w){
+    var th=document.createElement('th');
+    th.textContent=w;
+    hr.appendChild(th);
+  });
+  thead.appendChild(hr);
+  tbl.appendChild(thead);
+  
+  // Body
+  var tbody=document.createElement('tbody');
+  var row;
+  var cell=0;
+  
+  function newRow(){
+    row=document.createElement('tr');
+    tbody.appendChild(row);
   }
   
-  for (let d = 1; d <= daysInMonth; d++) {
-    let dayDiv = document.createElement('div');
-    dayDiv.className = 'day';
-    dayDiv.dataset.month = month;
-    dayDiv.dataset.day = d;
+  function addCell(content,cls){
+    var td=document.createElement('td');
+    if(cls)td.className=cls;
+    td.appendChild(content);
+    row.appendChild(td);
+  }
+  
+  newRow();
+  
+  // Previous month padding
+  for(var i=0;i<f;i++){
+    var dive=document.createElement('div');
+    dive.className='dnum';
+    dive.textContent=prev-f+1+i;
+    addCell(dive,'other');
+    cell++;
+  }
+  
+  // Current month
+  for(var d=1;d<=days;d++){
+    if(cell>0 && cell%7==0)newRow();
+    cell++;
     
-    let num = document.createElement('div');
-    num.className = 'day-number';
-    num.textContent = d;
-    dayDiv.appendChild(num);
+    var dive=document.createElement('div');
+    dive.className='dnum';
+    dive.textContent=d;
     
-    const key = month + '-' + d;
-    const dayEvents = events[key] || [];
-    const ordered = [...dayEvents].sort((a, b) => parseSort(a[1]) - parseSort(b[1]));
+    var td=document.createElement('td');
+    td.appendChild(dive);
     
-    for (const [subj, time] of ordered) {
-      let ev = document.createElement('div');
-      if (subj === '备注') {
-        ev.className = 'event note';
-        ev.textContent = '📌 ' + time;
-      } else {
-        const cls = subjectClasses[subj] || '';
-        ev.className = 'event ' + cls + (time === '待定' ? ' tbd' : '');
-        ev.textContent = time === '待定' ? subj + ' ⏳' : subj + ' ' + time;
+    var key=m+'-'+d;
+    var dayEvs=(evs[key]||[]).slice();
+    dayEvs.sort(function(a,b){return timeSort(a[1])-timeSort(b[1])});
+    
+    dayEvs.forEach(function(e){
+      var subj=e[0],time=e[1];
+      var ev=document.createElement('div');
+      if(subj=='备注'){
+        ev.className='ev note';
+        ev.textContent='📌'+time;
+      }else{
+        var c=SUBJ[subj]||'';
+        ev.className='ev '+c+(time=='待定'?' tbd':'');
+        ev.textContent=(time=='待定'?subj+'⏳':subj+' '+time);
       }
-      dayDiv.appendChild(ev);
-    }
-    
-    dayDiv.onclick = () => openEditor(month, d);
-    grid.appendChild(dayDiv);
-  }
-  
-  const totalCells = firstDay + daysInMonth;
-  const remaining = (7 - (totalCells % 7)) % 7;
-  for (let i = 1; i <= remaining; i++) {
-    let dayDiv = document.createElement('div');
-    dayDiv.className = 'day other-month';
-    let num = document.createElement('div');
-    num.className = 'day-number';
-    num.textContent = i;
-    dayDiv.appendChild(num);
-    grid.appendChild(dayDiv);
-  }
-  
-  return grid;
-}
-
-function renderAll() {
-  document.querySelectorAll('.calendar').forEach(c => c.remove());
-  months.forEach((m, idx) => {
-    let cal = document.createElement('div');
-    cal.className = 'calendar' + (idx === 1 ? ' active' : '');
-    cal.id = 'cal-' + idx;
-    
-    let header = document.createElement('div');
-    header.className = 'calendar-header';
-    weekdayNames.forEach(w => {
-      let d = document.createElement('div');
-      d.textContent = w;
-      header.appendChild(d);
+      td.appendChild(ev);
     });
-    cal.appendChild(header);
-    cal.appendChild(buildCalendar(m));
-    document.getElementById('calendars').appendChild(cal);
-  });
-}
-
-// ══════════════════════════
-// Editor Modal
-// ══════════════════════════
-function openEditor(month, day) {
-  const key = month + '-' + day;
-  const dayEvents = events[key] || [];
-  
-  let overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
-  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
-  
-  let modal = document.createElement('div');
-  modal.className = 'modal';
-  
-  modal.innerHTML = '<h3>' + month + '月' + day + '日 编辑</h3>';
-  
-  // Current events list
-  let listDiv = document.createElement('div');
-  listDiv.className = 'current-events';
-  listDiv.id = 'modalEventList';
-  
-  function renderEventList() {
-    const current = events[key] || [];
-    const ordered = [...current].sort((a, b) => parseSort(a[1]) - parseSort(b[1]));
-    listDiv.innerHTML = '';
-    if (ordered.length === 0) {
-      listDiv.innerHTML = '<div style="color:#c7c7cc;font-size:13px;padding:8px 0;">暂无安排</div>';
-      return;
-    }
-    for (let i = 0; i < ordered.length; i++) {
-      const [subj, time] = ordered[i];
-      let row = document.createElement('div');
-      row.className = 'event-row';
-      
-      let label = document.createElement('span');
-      if (subj === '备注') {
-        label.style.cssText = 'background:#fff9db;padding:2px 8px;border-radius:3px;border-left:2px solid #f0d060;';
-        label.textContent = '📌 ' + time;
-      } else {
-        const cls = subjectClasses[subj] || '';
-        label.textContent = subj + ' ' + time;
-      }
-      
-      let del = document.createElement('span');
-      del.className = 'del';
-      del.textContent = '✕';
-      del.onclick = (e) => {
-        e.stopPropagation();
-        current.splice(i, 1);
-        if (current.length === 0) {
-          delete events[key];
-        } else {
-          events[key] = current;
-        }
-        saveData(events);
-        renderEventList();
-        renderAll();
-        showToast('已删除');
-      };
-      
-      row.appendChild(label);
-      row.appendChild(del);
-      listDiv.appendChild(row);
-    }
-  }
-  renderEventList();
-  modal.appendChild(listDiv);
-  
-  // Add form
-  let form = document.createElement('div');
-  form.innerHTML = `
-    <div class="field">
-      <label>科目</label>
-      <select id="modalSubject">
-        <option value="数学">数学</option>
-        <option value="物理">物理</option>
-        <option value="化学">化学</option>
-        <option value="生物">生物</option>
-        <option value="备注">备注</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>时间</label>
-      <input id="modalTime" placeholder="如 18:30-20:30">
-    </div>
-  `;
-  modal.appendChild(form);
-  
-  let actions = document.createElement('div');
-  actions.className = 'modal-actions';
-  
-  let cancelBtn = document.createElement('button');
-  cancelBtn.textContent = '取消';
-  cancelBtn.onclick = () => overlay.remove();
-  actions.appendChild(cancelBtn);
-  
-  let addBtn = document.createElement('button');
-  addBtn.className = 'primary';
-  addBtn.textContent = '添加';
-  addBtn.onclick = () => {
-    const subj = document.getElementById('modalSubject').value;
-    const time = document.getElementById('modalTime').value.trim();
-    if (!time) { showToast('请填写时间'); return; }
     
-    if (!events[key]) events[key] = [];
-    events[key].push([subj, time]);
-    saveData(events);
-    renderEventList();
-    renderAll();
-    document.getElementById('modalTime').value = '';
-    showToast('已添加');
-  };
-  actions.appendChild(addBtn);
+    td.onclick=function(mm,dd){return function(){editor(mm,dd)}}(m,d);
+    row.appendChild(td);
+  }
   
-  modal.appendChild(actions);
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-  setTimeout(() => document.getElementById('modalTime').focus(), 100);
+  // Next month padding
+  for(var i=0;i<rem;i++){
+    if(cell>0 && cell%7==0)newRow();
+    cell++;
+    var dive=document.createElement('div');
+    dive.className='dnum';
+    dive.textContent=i+1;
+    addCell(dive,'other');
+  }
+  
+  tbl.appendChild(tbody);
+  return tbl;
 }
 
-// ══════════════════════════
-// Export / Import / Share
-// ══════════════════════════
-function exportData() {
-  let data = JSON.stringify(events, null, 2);
-  let blob = new Blob([data], {type: 'application/json'});
-  let url = URL.createObjectURL(blob);
-  let a = document.createElement('a');
-  a.href = url;
-  a.download = '暑期补习安排.json';
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('已导出');
-}
-
-function importData(event) {
-  let file = event.target.files[0];
-  if (!file) return;
-  let reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      let data = JSON.parse(e.target.result);
-      events = data;
-      saveData(events);
-      renderAll();
-      showToast('导入成功！');
-    } catch(err) {
-      showToast('导入失败：格式不对');
-    }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
-}
-
-function shareToWechat() {
-  // Copy the page URL to clipboard for the user to paste in WeChat
-  let url = window.location.href;
-  navigator.clipboard.writeText(url).then(() => {
-    showToast('链接已复制，发到微信即可');
-  }).catch(() => {
-    // Fallback: create a share text
-    let text = '暑期补习日历 - 在线版\n' + window.location.href;
-    showToast('复制链接发到微信家庭群');
+function renderAll(){
+  var container=document.getElementById('cals');
+  container.innerHTML='';
+  MONTHS.forEach(function(mo,idx){
+    var cal=monthCal(mo);
+    if(idx===1)cal.className='cal active';
+    container.appendChild(cal);
   });
 }
 
-function showToast(msg) {
-  let t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
-}
-
-// ══════════════════════════
-// Init
-// ══════════════════════════
-const monthNav = document.getElementById('monthNav');
-months.forEach((m, idx) => {
-  let btn = document.createElement('button');
-  btn.textContent = m.name;
-  btn.dataset.idx = idx;
-  if (idx === 1) btn.className = 'active';
-  btn.onclick = () => switchMonth(idx);
-  monthNav.appendChild(btn);
+// ========== Navigation ==========
+var nav=document.getElementById('nav');
+MONTHS.forEach(function(m,idx){
+  var btn=document.createElement('button');
+  btn.textContent=m.n;
+  if(idx===1)btn.className='active';
+  btn.onclick=function(){switchM(idx)};
+  nav.appendChild(btn);
 });
 
-function switchMonth(idx) {
-  document.querySelectorAll('.calendar').forEach(c => c.classList.remove('active'));
-  document.getElementById('cal-' + idx).classList.add('active');
-  document.querySelectorAll('.month-nav button').forEach((b, i) => {
-    b.className = i === idx ? 'active' : '';
-  });
+function switchM(idx){
+  document.querySelectorAll('.cal').forEach(function(c){c.className='cal'});
+  document.getElementById('cal-'+MONTHS[idx].i).className='cal active';
+  document.querySelectorAll('.nav button').forEach(function(b,i){b.className=i===idx?'active':''});
 }
 
+// ========== Editor ==========
+function editor(m,d){
+  var key=m+'-'+d;
+  var list=evs[key]||[];
+  
+  var mask=document.createElement('div');
+  mask.className='mask';
+  mask.onclick=function(e){if(e.target===mask)mask.remove()};
+  
+  var box=document.createElement('div');
+  box.className='box';
+  box.innerHTML='<h3>'+m+'月'+d+'日 编辑</h3>';
+  
+  var elist=document.createElement('div');
+  elist.className='elist';
+  function renderList(){
+    var cur=evs[key]||[];
+    elist.innerHTML='';
+    if(!cur.length){elist.innerHTML='<div style="color:#c7c7cc;padding:6px 0;font-size:12px">暂无安排</div>';return}
+    cur.slice().sort(function(a,b){return timeSort(a[1])-timeSort(b[1])}).forEach(function(item,i){
+      var s=item[0],t=item[1];
+      var row=document.createElement('div');
+      row.className='erow';
+      var label=document.createElement('span');
+      if(s=='备注'){label.innerHTML='📌 '+t}else{label.textContent=s+' '+t}
+      var del=document.createElement('span');
+      del.className='del';
+      del.textContent='✕';
+      del.onclick=function(){
+        cur.splice(i,1);
+        if(cur.length)evs[key]=cur;else delete evs[key];
+        save();renderList();renderAll()
+      };
+      row.appendChild(label);row.appendChild(del);
+      elist.appendChild(row);
+    });
+  }
+  renderList();
+  box.appendChild(elist);
+  
+  // Form
+  var fdiv=document.createElement('div');
+  fdiv.innerHTML=
+    '<div class="f"><label>科目</label><select id="sSel"><option>数学</option><option>物理</option><option>化学</option><option>生物</option><option>备注</option></select></div>'+
+    '<div class="f"><label>时间</label><input id="tInp" placeholder="如 18:30-20:30"></div>';
+  box.appendChild(fdiv);
+  
+  var btns=document.createElement('div');
+  btns.className='btns';
+  var cancel=document.createElement('button');
+  cancel.textContent='取消';
+  cancel.onclick=function(){mask.remove()};
+  btns.appendChild(cancel);
+  
+  var addBtn=document.createElement('button');
+  addBtn.className='primary';
+  addBtn.textContent='添加';
+  addBtn.onclick=function(){
+    var subj=document.getElementById('sSel').value;
+    var time=document.getElementById('tInp').value.trim();
+    if(!time){toast('请填写时间');return}
+    if(!evs[key])evs[key]=[];
+    evs[key].push([subj,time]);
+    save();renderList();renderAll();
+    document.getElementById('tInp').value='';
+    toast('已添加');
+  };
+  btns.appendChild(addBtn);
+  box.appendChild(btns);
+  
+  mask.appendChild(box);
+  document.body.appendChild(mask);
+  setTimeout(function(){document.getElementById('tInp').focus()},100);
+}
+
+// ========== Export/Import/Share ==========
+function exp(){
+  var blob=new Blob([JSON.stringify(evs,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='暑期补习安排.json';
+  a.click();URL.revokeObjectURL(url);
+  toast('已导出');
+}
+function imp(e){
+  var file=e.target.files[0];if(!file)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    try{
+      var d=JSON.parse(e.target.result);
+      evs=d;save();renderAll();
+      toast('导入成功');
+    }catch(err){toast('导入失败')}
+  };
+  r.readAsText(file);
+  e.target.value='';
+}
+function share(){
+  var url=window.location.href;
+  if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){toast('链接已复制')})}
+  else{toast('复制链接发到微信')}
+}
+
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast show';
+  clearTimeout(t._t);
+  t._t=setTimeout(function(){t.className='toast'},2000);
+}
+
+// ========== Init ==========
 renderAll();
 </script>
 </body>
